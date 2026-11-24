@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07110d">
+  <title>FloraPulse AI | Plant Health Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="glow glow-one"></div>
+  <div class="glow glow-two"></div>
+
+  <header class="navbar">
+    <a class="brand" href="#">
+      <span class="brand-icon">✳</span>
+      <span><strong>FloraPulse <b>AI</b></strong><small>PLANT HEALTH STUDIO</small></span>
+    </a>
+    <nav>
+      <a href="#studio">Studio</a>
+      <a href="#how">How it works</a>
+      <a href="#care">Care guide</a>
+    </nav>
+    <div class="model-status"><i id="statusDot"></i><span id="modelStatus">Connecting AI...</span></div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">✦ YOUR PERSONAL PLANT COMPANION</span>
+        <h1>Every leaf has<br>a <span class="gradient">story.</span></h1>
+        <p>Spot the signs. Understand your plant. Help it thrive with AI-powered insights and practical care guidance.</p>
+        <div class="hero-points">
+          <span>✓ Photo-based analysis</span>
+          <span>✓ Practical care tips</span>
+        </div>
+        <a class="hero-link" href="#studio">Explore the studio <span>↗</span></a>
+      </div>
+      <div class="hero-art">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="plant-visual">🌿</div>
+        <div class="floating-card card-top"><span>✦</span><div><small>PLANT VITALS</small><strong>Ready to check</strong></div></div>
+        <div class="floating-card card-bottom"><span>✳</span><div><small>FLORAPULSE AI</small><strong>Let's grow better</strong></div></div>
+        <div class="art-label">GROW WITH CONFIDENCE</div>
+      </div>
+    </section>
+
+    <section id="studio" class="studio">
+      <div class="section-heading">
+        <div><span class="eyebrow">THE DIAGNOSTIC STUDIO</span><h2>Let's check your <span class="gradient">plant.</span></h2></div>
+        <span class="privacy">⌁ Your image stays in this browser</span>
+      </div>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="panel-title">
+            <span class="step">01</span>
+            <div><h3>Upload a photo</h3><p>Choose a clear photo of the leaf or plant.</p></div>
+          </div>
+
+          <label class="drop-zone" id="dropZone" for="imageInput" tabindex="0">
+            <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+            <span class="upload-icon">↥</span>
+            <strong>Drop your plant photo here</strong>
+            <span>or <em>browse files</em> from your device</span>
+            <small>JPG, PNG or WEBP · Maximum 15 MB</small>
+          </label>
+
+          <div id="previewWrap" class="preview-wrap hidden">
+            <div class="preview-heading"><span>● IMAGE READY</span><button id="removeImage" type="button">Remove ×</button></div>
+            <img id="preview" class="preview-image" alt="Your uploaded plant">
+            <div class="file-info"><span class="file-symbol">▧</span><div><strong id="fileName">plant.jpg</strong><small id="fileDetails">Ready for analysis</small></div><span class="ready">✓ Ready</span></div>
+          </div>
+
+          <div class="fields">
+            <label for="plantType">Plant type <small>OPTIONAL</small></label>
+            <select id="plantType">
+              <option value="unknown">I'm not sure</option>
+              <option value="tomato">Tomato</option>
+              <option value="potato">Potato</option>
+              <option value="pepper">Pepper / Capsicum</option>
+              <option value="houseplant">Houseplant</option>
+              <option value="other">Other garden plant</option>
+            </select>
+
+            <label for="symptoms">What are you noticing? <small>OPTIONAL</small></label>
+            <select id="symptoms">
+              <option value="unsure">Not sure yet</option>
+              <option value="spots">Spots or unusual marks</option>
+              <option value="yellowing">Yellowing leaves</option>
+              <option value="wilting">Wilting or drooping</option>
+              <option value="mold">Powdery or fuzzy growth</option>
+              <option value="pests">Visible insects or pests</option>
+            </select>
+          </div>
+
+          <button id="analyzeBtn" class="primary-btn" disabled>
+            <span>✳</span><b id="buttonText">Loading AI model...</b><span class="arrow">↗</span>
+          </button>
+          <p class="footnote">✦ AI suggestions are a starting point, not a confirmed diagnosis.</p>
+        </section>
+
+        <section class="panel result-panel">
+          <div class="panel-title">
+            <span class="step">02</span>
+            <div><h3>Your plant report</h3><p>Insights from your selected image.</p></div>
+            <span id="reportStatus" class="report-status">AWAITING PHOTO</span>
+          </div>
+
+          <div id="emptyReport" class="empty-report">
+            <div class="seed-art"><span>🌱</span><i>✦</i></div>
+            <h3>Your plant's story starts here.</h3>
+            <p>Upload a clear photo, then analyze it to see your model's prediction and care suggestions.</p>
+            <div class="mini-steps"><span><b>1</b> Add photo</span><span>—</span><span><b>2</b> Analyze</span><span>—</span><span><b>3</b> Review</span></div>
+          </div>
+
+          <div id="loadingReport" class="loading-report hidden">
+            <div class="loader">✳</div><h3>Reading your plant...</h3>
+            <p id="loadingMessage">Running your image through the trained model.</p>
+            <div class="progress"><span></span></div>
+          </div>
+
+          <div id="reportContent" class="hidden">
+            <div class="diagnosis">
+              <span class="diagnosis-icon" id="diagnosisIcon">✦</span>
+              <div><small id="diagnosisLabel">TOP MODEL PREDICTION</small><h3 id="diagnosisTitle">Prediction</h3><p id="diagnosisSubtitle"></p></div>
+            </div>
+            <div class="confidence">
+              <div><span>Model confidence</span><strong id="confidenceValue">0%</strong></div>
+              <div class="meter"><span id="confidenceBar"></span></div>
+              <small>Confidence is a model score, not medical certainty.</small>
+            </div>
+            <div class="breakdown">
+              <div class="subheading"><strong>MODEL BREAKDOWN</strong><small>All class scores</small></div>
+              <div id="predictionList"></div>
+            </div>
+            <div class="care-card" id="care">
+              <div class="care-heading"><span>✧</span><div><small>NEXT BEST STEPS</small><h3>Care suggestions</h3></div></div>
+              <ul id="careList"></ul>
+            </div>
+            <p class="disclaimer">ⓘ Use this as preliminary guidance. Confirm important disease or treatment decisions with a local agricultural expert.</p>
+          </div>
+
+          <div id="errorReport" class="error-report hidden">
+            <span>!</span><h3>We couldn't finish the analysis.</h3>
+            <p id="errorMessage">Check your connection and try again.</p>
+            <button id="retryBtn" class="secondary-btn">Try again ↻</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="how" class="how-section">
+      <div><span class="eyebrow">SIMPLE BY DESIGN</span><h2>Better care starts<br>with <span class="gradient">one photo.</span></h2><p>No complicated setup. Just a clear picture, a model prediction, and sensible next steps.</p></div>
+      <div class="how-cards">
+        <article><span class="how-icon">↥</span><small>01 / UPLOAD</small><h3>Show us the leaf</h3><p>Use a well-lit, in-focus photo with minimal shadows.</p></article>
+        <article><span class="how-icon cyan">✳</span><small>02 / ANALYZE</small><h3>Let your model check</h3><p>Your trained model compares the photo with its learned classes.</p></article>
+        <article><span class="how-icon purple">♡</span><small>03 / TAKE ACTION</small><h3>Care with confidence</h3><p>Review care steps and verify uncertain results before treatment.</p></article>
+      </div>
+    </section>
+
+    <section class="bottom-banner"><span>✳</span><div><h3>A little care goes a long way.</h3><p>Observe, learn, and help your plants thrive — one leaf at a time.</p></div><a href="#studio">Back to studio ↑</a></section>
+  </main>
+
+  <footer><strong>✳ FloraPulse AI</strong><span>Built for curious growers and healthier gardens.</span><span id="footerStatus">Initializing model...</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
